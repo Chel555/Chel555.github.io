@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Game "Pixel picture"</title>
+	</head>
+	<script type="text/javascript">
+	
+	window.onload = function()
+	{
+		document.getElementById("picture").src = "picture.png?img" + Math.random(0,100);	
+	}
+	
+	function backUpload()
+	{
+		location.assign("index.php");
+	
+	}
+	
+		function updatePicture()
+		{
+		
+			if ( (Number(document.getElementById("sizeSquares").value)) <= 0 ) document.getElementById("sizeSquares").value = "1";
+			if ( (Number(document.getElementById("distSquares").value)) < 0 ) document.getElementById("distSquares").value = "1";
+			
+			document.getElementById("picture").width = document.getElementById("sizePictureWidth").value;
+			document.getElementById("picture").height = document.getElementById("sizePictureHeight").value;
+
+	document.getElementById("myCanvas").width = document.getElementById("sizePictureWidth").value;
+	document.getElementById("myCanvas").height = document.getElementById("sizePictureHeight").value;
+	document.getElementById("myCanvas2").width = document.getElementById("sizePictureWidth").value;
+	document.getElementById("myCanvas2").height = document.getElementById("sizePictureHeight").value;
+			
+			var widthImg = document.getElementById("picture").width;
+			var heightImg = document.getElementById("picture").height;
+			
+			var real_widthImg = document.getElementById("picture").naturalWidth;
+			var real_heightImg = document.getElementById("picture").naturalHeight;			
+
+		
+		
+
+
+	document.getElementById("sizePictureWidth").value = widthImg;	
+	document.getElementById("sizePictureHeight").value = heightImg;
+	
+
+	var c_q = document.getElementById('myCanvas').getContext("2d");	
+	c_q.clearRect(0, 0, real_widthImg, real_heightImg);	
+	
+	var c2_q = document.getElementById('myCanvas2').getContext("2d");	
+	c2_q.clearRect(0, 0, real_widthImg, real_heightImg);		
+	
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    
+	var c2 = document.getElementById("myCanvas2");
+    var ctx2 = c2.getContext("2d");
+
+
+    var img = document.getElementById("picture");
+	
+	
+	
+    ctx.drawImage(img, 0, 0, widthImg, heightImg);
+	
+	
+		var size = Number(document.getElementById("sizeSquares").value);
+		var offset = Number(document.getElementById("distSquares").value);		    
+
+		var q = 0;
+		
+		var posX = 0;
+		var posY = 0;
+	
+		var sizeX = 0;
+		var sizeY = 0;
+		var pixels = 0;
+		var square = 0
+
+		
+		var imgData = ctx.getImageData(0, 0, c.width, c.height);
+	
+		var pR = new Array(widthImg);
+		for(var i = 0; i < pR.length; i++)
+			pR[i] = new Array(heightImg);
+		var pG = new Array(widthImg);
+		for(var i = 0; i < pR.length; i++)
+			pG[i] = new Array(heightImg);
+		var pB = new Array(widthImg);	
+		for(var i = 0; i < pR.length; i++)
+			pB[i] = new Array(heightImg);
+		var pA = new Array(widthImg);	
+		for(var i = 0; i < pR.length; i++)
+			pA[i] = new Array(heightImg);
+			
+		for (var i = 0; i < imgData.data.length; i += 4) 
+		{				
+			pR[sizeX][sizeY] = imgData.data[i];
+			pG[sizeX][sizeY] = imgData.data[i+1];
+			pB[sizeX][sizeY] = imgData.data[i+2];
+			pA[sizeX][sizeY] = imgData.data[i+3];
+			
+			sizeX += 1;
+			if (sizeX >= widthImg)
+			{
+				sizeX = 0;
+				sizeY += 1;
+			}				
+		}
+		sizeX = 0;
+		sizeY = 0;
+
+		while (sizeY < heightImg)
+		{
+		
+			if ((pA[sizeX][sizeY] == 255) )
+			{
+				ctx2.fillStyle = "rgb("+pR[sizeX][sizeY]+", "+pG[sizeX][sizeY]+", "+pB[sizeX][sizeY]+")";
+				ctx2.fillRect(posX,posY,size,size);
+	
+				if ((pR[sizeX][sizeY] < 255) && (pG[sizeX][sizeY] < 255) && (pB[sizeX][sizeY] < 255)) pixels += 1;
+			}
+			
+			sizeX += size + offset;
+			posX += size + offset;
+			if (sizeX >= widthImg)
+			{
+				posX = 0;
+				sizeX = 0;
+				sizeY += size + offset;
+				posY += size + offset;
+			}	
+			
+		}
+		//square *= sizePixel;
+		square = (((0.2 * size) * (0.2 * size)) * pixels) / 10;
+		
+		document.getElementById("test").innerHTML = 'Count of squares: '+pixels+'<br>Square of squares: '+square+' cantimetres<br>';
+
+		
+		}
+	
+	</script>
+<body>
+
+<h1></b>Game "Pixel picture" by Mikhail Kochitov</b></h1>
+
+
+
+  <canvas id="myCanvas2" style="border:1px solid #d3d3d3;">
+    Your browser does not support the HTML5 canvas tag.
+  </canvas>
+  
+
+  <canvas id="myCanvas" style="border:1px solid #d3d3d3;">
+    Your browser does not support the HTML5 canvas tag.
+  </canvas> 
+<img id="picture" src="picture.png" style="display: none;"> 
+	<br>
+	
+Size of squares (in pixels): <input type=text id=sizeSquares value="4"><br><br>
+Distance between squares (in pixels): <input type=text id=distSquares value="1"><br><br>
+Size picture (in pixels): <input type=text id=sizePictureWidth value=""> X <input type=text id=sizePictureHeight value=""><br><br>
+<button id=applyBtn onclick=updatePicture()>Apply</button>
+<button id=applyBtn onclick=backUpload()>Back</button>
+<br><br>
+  <script>
+    document.getElementById("picture").onload = function () {
+
+	//var img = $("#img_"+(cou-1));
+
+		
+
+	
+	var widthImg = document.getElementById("picture").naturalWidth;
+	var heightImg = document.getElementById("picture").naturalHeight;
+	
+	document.getElementById("myCanvas").width = widthImg;
+	document.getElementById("myCanvas").height = heightImg;
+	document.getElementById("myCanvas2").width = widthImg;
+	document.getElementById("myCanvas2").height = heightImg;
+
+	document.getElementById("sizePictureWidth").value = widthImg;	
+	document.getElementById("sizePictureHeight").value = heightImg;
+	
+
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    
+	var c2 = document.getElementById("myCanvas2");
+    var ctx2 = c2.getContext("2d");	
+	
+    var img = document.getElementById("picture");
+    ctx.drawImage(img, 0, 0);
+	
+	
+		var size = Number(document.getElementById("sizeSquares").value);
+		var offset = Number(document.getElementById("distSquares").value);		    
+
+		var posX = 0;
+		var posY = 0;
+	
+		var sizeX = 0;
+		var sizeY = 0;
+		var pixels = 0;
+		var square = 0
+		
+		var R = 0;
+		var G = 0;
+		var B = 0;
+		var A = 0;
+
+		
+		var imgData = ctx.getImageData(0, 0, c.width, c.height);
+	
+		var pR = new Array(widthImg);
+		for(var i = 0; i < pR.length; i++)
+			pR[i] = new Array(heightImg);
+		var pG = new Array(widthImg);
+		for(var i = 0; i < pR.length; i++)
+			pG[i] = new Array(heightImg);
+		var pB = new Array(widthImg);	
+		for(var i = 0; i < pR.length; i++)
+			pB[i] = new Array(heightImg);
+		var pA = new Array(widthImg);	
+		for(var i = 0; i < pR.length; i++)
+			pA[i] = new Array(heightImg);
+			
+		for (var i = 0; i < imgData.data.length; i += 4) 
+		{				
+			pR[sizeX][sizeY] = imgData.data[i];
+			pG[sizeX][sizeY] = imgData.data[i+1];
+			pB[sizeX][sizeY] = imgData.data[i+2];
+			pA[sizeX][sizeY] = imgData.data[i+3];
+			
+			
+			
+			sizeX += 1;
+			if (sizeX >= widthImg)
+			{
+				sizeX = 0;
+				sizeY += 1;
+			}				
+		}
+		sizeX = 0;
+		sizeY = 0;
+
+		while (sizeY < heightImg)
+		{
+		
+
+			//else
+			//
+			if ((pA[sizeX][sizeY] == 255) )
+			{
+				ctx2.fillStyle = "rgb("+pR[sizeX][sizeY]+", "+pG[sizeX][sizeY]+", "+pB[sizeX][sizeY]+")";
+				ctx2.fillRect(posX,posY,size,size);
+				pixels += 1;
+				
+				if ((pR[sizeX][sizeY] < 255) && (pG[sizeX][sizeY] < 255) && (pB[sizeX][sizeY] < 255)) square += (2 / size) * (2 / size);
+
+			}
+			
+			sizeX += size + offset;
+			posX += size + offset;
+			if (sizeX >= widthImg)
+			{
+				posX = 0;
+				sizeX = 0;
+				sizeY += size + offset;
+				posY += size + offset;
+			}	
+			
+	
+			
+		}
+		
+		//square *= sizePixel;
+		square = (((0.2 * size) * (0.2 * size)) * pixels) / 10;		
+		
+		//document.getElementById("test").innerHTML = '<b>Result</b><br>Count of squares: '+pixels+'<br>Square of squares: '+square+' cantimetres<br>'+R+' '+G+' '+B+' '+A;
+		document.getElementById("test").innerHTML = '<b>Result</b><br>Count of squares: '+pixels+'<br>Square of squares: '+square+' cantimetres<br>';
+
+};
+  </script>
+  
+<div id=test></div>
+</body>
+</html>
